@@ -1,5 +1,7 @@
 #include "bits/stdc++.h"
 using namespace std;
+vector<vector<int>> adj;
+vector<int> in, out, parent;
 
 // preprocessing utile per query su un albero
 // si "appiattisce" su un array di dimensione n
@@ -33,36 +35,39 @@ struct segtree {
     }
 };
 
+void euler_tour (int node, int &t) {
+    in[node] = t;
+    for (auto u: adj[node]) {
+        if (u != parent[node]) {
+            t++;
+            parent[u] = node;
+            euler_tour(u, t);
+        }
+    }
+    out[node] = t;
+}
+
 int main() {
     int n; cin >> n;
     vector<int> v(n);
     for (auto &u: v) cin >> u;
-    vector<vector<int>> adj(n);
+
+    adj.resize(n), parent.resize(n);
+    in.resize(n), out.resize(n);
     for (int i = 0; i < n - 1; i++) {
         int a, b; cin >> a >> b;
         adj[a].emplace_back(b);
         adj[b].emplace_back(a);
     }
-    vector<int> parent(n);
-    vector<int> in(n), out(n); // tempo di entrata e uscita dal nodo i
-    function <void(int, int&)> dfs = [&] (int node, int &t) -> void {
-        in[node] = t;
-        for (auto u: adj[node]) {
-            if (u != parent[node]) {
-                t++;
-                parent[u] = node;
-                dfs(u, t);
-            }
-        }
-        out[node] = t;
-    };
+
     int t = 0;
-    dfs(0, t);
-    assert(t + 1 == n);
+    euler_tour(0, t);
+
     vector<int> diff(n + 1); // d[i] = v[i] - v[i - 1]
     for (int i = 0; i < n; i++) {
         diff[in[i]] += v[i];
         diff[out[i] + 1] -= v[i];
     }
-    segtree seg = segtree(n + 1, diff);
+
+    segtree seg = segtree(n + 1, diff); // segtree per update e query più rapidi
 }
