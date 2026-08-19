@@ -1,7 +1,7 @@
 #include "bits/stdc++.h"
 using namespace std;
 
-// somma massima di un sottoarray (sottosequenza contigua)
+// algoritmo di kadane per somma massima di un sottoarray (sottosequenza contigua)
 
 int mss(int n, vector<int> v){
     int best = 0, cur = 0;

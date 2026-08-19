@@ -4,10 +4,10 @@ vector<int> v;
 
 // cerca il lower bound in un array ordinato
 
-int binary_search(int l, int r, int x){
-    while(r - l > 1){
+int binary_search(int l, int r, int x) {
+    while (l < r) {
         int m = (l + r) >> 1;
-        v[m] <= x ? l = m : r = m;
+        v[m] < x ? l = m + 1 : r = m;
     }
     return l;
 }
@@ -15,7 +15,7 @@ int binary_search(int l, int r, int x){
 int main(){
     int n; cin >> n;
     v.resize(n);
-    for(auto &u: v) cin >> u;
+    for (auto &u: v) cin >> u;
     int x; cin >> x;
     int ix = binary_search(0, n, x);
     cout << ix << "\n";

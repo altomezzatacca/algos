@@ -2,7 +2,7 @@
 using namespace std;
 
 // treap con point query di spostamento e controllo
-// rand() non è molto buono
+// rand() non è molto buono come random seed
 
 struct treap{
     int v, p, sz;
