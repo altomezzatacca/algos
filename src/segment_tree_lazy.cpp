@@ -8,7 +8,6 @@ constexpr static ll inf = 1e16;
 struct segtree{
     int sz = 1;
     struct node{
-        int l, r;
         ll v_sum, v_min;
         bool sum_update, set_update;
         ll u_sum, u_set;
@@ -21,25 +20,19 @@ struct segtree{
         for(int i = 0; i < n; i++){
             t[sz + i].v_sum = v[i];
             t[sz + i].v_min = v[i];
-            t[sz + i].l = i;
-            t[sz + i].r = i + 1;
         }
         for(int i = n; i < sz; i++){
             t[sz + i].v_sum = 0;
             t[sz + i].v_min = inf;
-            t[sz + i].l = i;
-            t[sz + i].r = i + 1;
         }
         for(int i = sz - 1; i > 0; i--){
             t[i].v_sum = t[2 * i].v_sum + t[2 * i + 1].v_sum;
             t[i].v_min = min(t[2 * i].v_min, t[2 * i + 1].v_min);
-            t[i].l = t[2 * i].l;
-            t[i].r = t[2 * i + 1].r;
         }
     }
-    void propagate(int node){
+    void propagate(int node, int nl, int nr){
         if(t[node].set_update){
-            t[node].v_sum = t[node].u_set * (t[node].r - t[node].l);
+            t[node].v_sum = t[node].u_set * (nr - nl);
             t[node].v_min = t[node].u_set;
             if(node < sz){
                 t[2 * node].set_update = 1;
@@ -55,7 +48,7 @@ struct segtree{
             t[node].set_update = 0;
         }
         if(t[node].sum_update){
-            t[node].v_sum += t[node].u_sum * (t[node].r - t[node].l);
+            t[node].v_sum += t[node].u_sum * (nr - nl);
             t[node].v_min += t[node].u_sum;
             if(node < sz){
                 t[2 * node].sum_update = 1;
@@ -67,59 +60,51 @@ struct segtree{
             t[node].sum_update = 0;
         }
     }
-    ll get_sum(int node, int ql, int qr){
-        ll ans = 0;
-        propagate(node);
-        if(qr <= t[node].l || t[node].r <= ql) return ans;
-        if(ql <= t[node].l && t[node].r <= qr){
-            ans = t[node].v_sum;
-        } else if(node < sz){
-            ans += get_sum(2 * node, ql, qr);
-            ans += get_sum(2 * node + 1, ql , qr);
-        }
-        return ans;
+    ll get_sum(int node, int nl, int nr, int ql, int qr){
+        propagate(node, nl, nr);
+        if(qr <= nl || nr <= ql) return 0;
+        if(ql <= nl && nr <= qr) return t[node].v_sum;
+        int nm = (nl + nr) >> 1;
+        return get_sum(2 * node, nl, nm, ql, qr) + get_sum(2 * node + 1, nm, nr, ql, qr);
     }
-    ll get_min(int node, int ql, int qr){
-        ll ans = inf;
-        propagate(node);
-        if(qr <= t[node].l || t[node].r <= ql) return ans;
-        if(ql <= t[node].l && t[node].r <= qr){
-            ans = t[node].v_min;
-        } else if(node < sz){
-            ans = min(ans, get_min(2 * node, ql, qr));
-            ans = min(ans, get_min(2 * node + 1, ql , qr));
-        }
-        return ans;
+    ll get_min(int node, int nl, int nr, int ql, int qr){
+        propagate(node, nl, nr);
+        if(qr <= nl || nr <= ql) return inf;
+        if(ql <= nl && nr <= qr) return t[node].v_min;
+        int nm = (nl + nr) >> 1;
+        return min(get_min(2 * node, nl, nm, ql, qr), get_min(2 * node + 1, nm, nr, ql, qr));
     }
-    void add_range(int node, int ql, int qr, ll x){
-        propagate(node);
-        if(qr <= t[node].l || t[node].r <= ql) return;
-        if(ql <= t[node].l && t[node].r <= qr){
+    void add_range(int node, int nl, int nr, int ql, int qr, ll x){
+        propagate(node, nl, nr);
+        if(qr <= nl || nr <= ql) return;
+        if(ql <= nl && nr <= qr){
             t[node].sum_update = 1;
             t[node].u_sum += x;
-            propagate(node);
-        } else if(node < sz){
-            add_range(2 * node, ql, qr, x);
-            add_range(2 * node + 1, ql, qr, x);
-            t[node].v_sum = t[2 * node].v_sum + t[2 * node + 1].v_sum;
-            t[node].v_min = min(t[2 * node].v_min, t[2 * node + 1].v_min);
+            propagate(node, nl, nr);
+            return;
         }
+        int nm = (nl + nr) >> 1;
+        add_range(2 * node, nl, nm, ql, qr, x);
+        add_range(2 * node + 1, nm, nr, ql, qr, x);
+        t[node].v_sum = t[2 * node].v_sum + t[2 * node + 1].v_sum;
+        t[node].v_min = min(t[2 * node].v_min, t[2 * node + 1].v_min);
     }
-    void set_range(int node, int ql, int qr, ll x){
-        propagate(node);
-        if(qr <= t[node].l || t[node].r <= ql) return;
-        if(ql <= t[node].l && t[node].r <= qr){
+    void set_range(int node, int nl, int nr, int ql, int qr, ll x){
+        propagate(node, nl, nr);
+        if(qr <= nl || nr <= ql) return;
+        if(ql <= nl && nr <= qr){
             t[node].sum_update = 0;
             t[node].u_sum = 0;
             t[node].set_update = 1;
             t[node].u_set = x;
-            propagate(node);
-        } else if(node < sz){
-            set_range(2 * node, ql, qr, x);
-            set_range(2 * node + 1, ql, qr, x);
-            t[node].v_sum = t[2 * node].v_sum + t[2 * node + 1].v_sum;
-            t[node].v_min = min(t[2 * node].v_min, t[2 * node + 1].v_min);
+            propagate(node, nl, nr);
+            return;
         }
+        int nm = (nl + nr) >> 1;
+        set_range(2 * node, nl, nm, ql, qr, x);
+        set_range(2 * node + 1, nm, nr, ql, qr, x);
+        t[node].v_sum = t[2 * node].v_sum + t[2 * node + 1].v_sum;
+        t[node].v_min = min(t[2 * node].v_min, t[2 * node + 1].v_min);
     }
 };
 

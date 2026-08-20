@@ -5,7 +5,7 @@ using namespace std;
 // si "appiattisce" su un array di dimensione n
 // ogni sottoalbero di un nodo corrisponde a [in[i], out[i]]
 
-struct graph {
+struct tree {
 
     int n;
     vector<int> in, out, parent;
@@ -42,6 +42,6 @@ struct graph {
 };
 
 int main() {
-    graph g;
+    tree g;
     g.build();
 }
