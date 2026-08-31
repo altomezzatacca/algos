@@ -4,10 +4,10 @@ constexpr static int mod = 1e9 + 7;
 using ll = long long;
 
 // potenza in tempo logaritmico
-ll fast_pow(ll b, ll e){
+ll fast_pow (ll b, ll e) {
     ll ans = 1;
-    while(e){
-        if(e & 1) ans = (ans * b) % mod;
+    while (e) {
+        if (e & 1) ans = (ans * b) % mod;
         b = (b * b) % mod;
         e >>= 1;
     }
@@ -15,40 +15,41 @@ ll fast_pow(ll b, ll e){
 }
 
 // inverso in modulo mod
-ll modular_inverse(ll n){
+ll modular_inverse (ll n) {
     return fast_pow(n, mod - 2);
 }
 
 // massimo comun divisore
-ll gcd(ll a, ll b){
-    if(b == 0) return a;
+ll gcd (ll a, ll b) {
+    if (b == 0) return a;
     return gcd(b, a % b);
 }
 
 // minimo comune multiplo
-ll lcm(ll a, ll b){
+ll lcm (ll a, ll b) {
     return a * b / gcd(a, b);
 }
 
 // lemma di burnside per collane su n perle e m colori
-ll burnside(ll n, ll m){
+// equivale a (\sum_{k = 1}^n m^\gcd(k, n)) / n
+ll burnside (ll n, ll m) {
     ll ans = 0;
-    for(int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
         ans = (ans + fast_pow(m, gcd(i, n))) % mod;
     ans = (ans * modular_inverse(n)) % mod;
     return ans;
 }
 
 // fattoriale
-ll factorial(ll n){
+ll factorial (ll n) {
     ll ans = 1;
-    for(int i = 2; i <= n; i++)
+    for (int i = 2; i <= n; i++)
         ans = (ans * i) % mod;
     return ans;
 }
 
 // binomiale
-ll binomial(ll a, ll b){
+ll binomial (ll a, ll b) {
     if (b > a) return 0;
     ll ans = 1;
     ans = (ans * factorial(a)) % mod;
@@ -57,18 +58,20 @@ ll binomial(ll a, ll b){
     return ans;
 }
 
-// numeri di catalan
-ll catalan(ll n){
+// numeri di catalan: C_n = \sum_{k = 0}^{n - 1} C_k * C_{n - k - 1}
+// equivale a \binom{2n}{n} / (n + 1)
+ll catalan (ll n) {
     ll ans = 1;
     ans = (ans * modular_inverse(n + 1)) % mod;
     ans = (ans * binomial(2 * n, n)) % mod;
     return ans;
 }
 
-// \sum_{k = 1}^{n} d(k) con d(n) = numero di divisori di n
-ll div(ll n){
+// harmonic lemma: calcolo di n/1 + n/2 + n/3 + ... + n/n in O(2 * sqrt(n))
+// equivale a \sum_{k = 1}^{n} d(k) con d(n) = numero di divisori di n
+ll harmonic (ll n) {
     ll ans = 0;
-    for(ll k = 1; k <= n;){
+    for (ll k = 1; k <= n;){
         ll v = n / k;
         ll r = n / v;
         ans = (ans + v * (r - k + 1)) % mod;
