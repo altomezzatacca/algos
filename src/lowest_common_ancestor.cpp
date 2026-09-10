@@ -1,6 +1,8 @@
 #include "bits/stdc++.h"
 using namespace std;
 
+// utilizza il k-th ancestor per rispondere in O(log N)
+
 struct tree {
 
     int n, logn = 20;

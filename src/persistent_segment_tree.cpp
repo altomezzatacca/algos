@@ -2,6 +2,9 @@
 using namespace std;
 using ll = long long;
 
+// struttura dati per tenere traccia di più versioni
+// di un array e farci query sopra
+
 struct segtree {
 
     struct node {
