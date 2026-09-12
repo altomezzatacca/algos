@@ -13,11 +13,11 @@ using vec = vector<Args...>;
 typedef long long ll;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
-mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 constexpr static int inf = 2e9;
 constexpr static ll linf = 1e18;
 constexpr static int mod1 = 1e9 + 7;
 constexpr static int mod2 = 998244353;
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 // template per codice c++ particolarmente lungo
 // compilare con: g++ codice.cpp -o a -O1 -g -fsanitize=address,undefined -Wall -Wextra -Wshadow -Wpedantic
