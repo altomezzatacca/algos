@@ -100,6 +100,17 @@ bool prime_check(ll n){
     return 1;
 }
 
+// moltiplicazione di due matrici
+vector<vector<int>> mat_mult(vector<vector<int>> a, vector<vector<int>> b) {
+    int r1 = a.size(), c1 = a[0].size(), c2 = b[0].size();
+    vector<vector<int>> v(r1, vector<int> (c2));
+    for (int i = 0; i < r1; i++)
+        for (int j = 0; j < c2; j++)
+            for (int k = 0; k < c1; k++)
+                v[i][j] += a[i][k] * b[k][j];
+    return v;
+}
+
 int main(){
     cout << "\n";
 }
