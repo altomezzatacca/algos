@@ -1,6 +1,5 @@
 #include "bits/stdc++.h"
 using namespace std;
-constexpr static int inf = 1e9;
 
 // trova le componenti fortemente connesse di un grafo in O(n + m)
 
